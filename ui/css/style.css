@@ -26,33 +26,34 @@ body {
     display: flex;
     position: absolute;
     bottom: 0;
-    padding-bottom: 300px; /* 270px */
-    padding-left: 57px; /* 205px */
+    padding-bottom: 240px; /* 270px */
+    padding-left: 5px; /* 205px */
 }
 
 .pb-vorp-food {
     display: flex;
     position: absolute;
     bottom: 0;
-    padding-bottom: 318px; /* 270px */
-    padding-left: 105px; /* 155px */
+    padding-bottom: 180px; /* 270px */
+    padding-left: 5px; /* 155px */
 }
 
 .water {
     display: flex;
     position: relative;
-    z-index: 1;
+    z-index: 1;    
 }
 
 .water-icon {
     display: flex;
     position: absolute;
-    top: 21px; /* 21px */
-    left: 78px; /* 176px */
+    top: 23px; /* 21px */
+    left: 28px; /* 176px */
     transform: translate(-50%, -50%);
     z-index: 2;
-    width: 2.08vw; /* 40px */
-    height: 2.08vw; /* 40px */
+    width: 1.92vw; /* 40px */
+    height: 1.92vw; /* 40px */
+    
 }
 
 .food {
@@ -64,12 +65,12 @@ body {
 .food-icon {
     display: flex;
     position: absolute;
-    top: 21px; /* 21px */
-    left: 126px; /* 227px */
+    top: 23px; /* 21px */
+    left: 28px; /* 227px */
     transform: translate(-50%, -50%);
     z-index: 2;
-    width: 2.08vw; /* 40px */
-    height: 2.08vw; /* 40px */
+    width: 1.92vw; /* 40px */
+    height: 1.92vw; /* 40px */
 }
 
 /* Hud redesigned by Z-eus */
