@@ -1,4 +1,3 @@
-
 PlayerStatus = {}
 local loaded = false
 local metabolismActive = false
@@ -59,6 +58,44 @@ RegisterNetEvent('vorp:SelectedCharacter', function(charId)
     TriggerServerEvent("vorpmetabolism:GetStatus")
 end)
 
+-- on resource stop
+AddEventHandler('onResourceStop', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+        return
+    end
+    ClearPedTasks(PlayerPedId(), true, true)
+    AnimpostfxStopAll()
+
+    for _, prop in ipairs(PROPS) do
+        if DoesEntityExist(prop) then
+            DeleteEntity(prop)
+        end
+    end
+end)
+
+--onclient resource start
+AddEventHandler('onClientResourceStart', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+        return
+    end
+    -- for tests
+    -- TriggerServerEvent("vorpmetabolism:GetStatus")
+    --Wait(5000)
+    -- SendNUIMessage({ action = "show_body" })
+    -- loaded = true
+    -- NUIEvents.UpdateHUD()
+    -- StartMetabolismThread()
+    -- StartMetabolismUpdatersThread()
+    -- StartMetabolismSaveDBThread()
+    -- StartRadarControlHudThread()
+    -- StartMetabolismSetThread()
+end)
+
+--show body only after player has fully spawned
+AddEventHandler("vorp_core:Client:OnPlayerSpawned", function()
+    SendNUIMessage({ action = "show_body" })
+end)
+
 -- [ THREADS ] --
 function StartMetabolismThread()
     CreateThread(function()
@@ -70,14 +107,14 @@ function StartMetabolismThread()
             if (PlayerStatus["Thirst"] <= 0 and not IsPlayerDead(PlayerId())) then
                 local newHealth = GetEntityHealth(PlayerPedId()) - 20;
                 if (newHealth < 1) then
-                    ApplyDamageToPed(PlayerPedId(), 500000, false, true, true);
+                    ApplyDamageToPed(PlayerPedId(), 500000, false, 0, 0);
                 end
                 SetEntityHealth(PlayerPedId(), newHealth, 0);
             end
             if (PlayerStatus["Hunger"] <= 0 and not IsPlayerDead(PlayerId())) then
                 local newHealth = GetEntityHealth(PlayerPedId()) - 20;
                 if (newHealth < 1) then
-                    ApplyDamageToPed(PlayerPedId(), 500000, false, true, true);
+                    ApplyDamageToPed(PlayerPedId(), 500000, false, 0, 0);
                 end
                 SetEntityHealth(PlayerPedId(), newHealth, 0);
             end
@@ -106,7 +143,7 @@ function StartMetabolismUpdatersThread()
                 if (PlayerStatus["Thirst"] < 0) then
                     PlayerStatus["Thirst"] = 0;
                 end
-                if (PlayerStatus["Thirst"] < 0) then
+                if (PlayerStatus["Hunger"] < 0) then
                     PlayerStatus["Hunger"] = 0;
                 end
             end
@@ -137,7 +174,7 @@ function StartRadarControlHudThread()
         while true do
             if (not loaded) then return end
             Wait(1000)
-            if ((IsRadarHidden()) or (IsPauseMenuActive()) or (not ApiCalls.APIShowOn) or (NetworkIsInSpectatorMode()) or (IsHudHidden())) then
+            if ((IsRadarHidden()) or (not ApiCalls.APIShowOn) or (NetworkIsInSpectatorMode()) or (IsHudHidden())) then
                 NUIEvents.ShowHUD(false);
             else
                 NUIEvents.ShowHUD(true);
@@ -152,74 +189,53 @@ function StartMetabolismSetThread()
 
         Wait(10000);
         local pPedID = PlayerPedId();
-        local metabolism = PlayerStatus["Metabolism"] / 1000
+        local metabolism = PlayerStatus["Metabolism"] and PlayerStatus["Metabolism"] / 1000 or 0
 
         if (metabolism == 10) then
             EquipMetaPedOutfit(pPedID, waistTypes[20]);
-            SaveNewMetabolism(waistTypes[20]);
         elseif (metabolism == 9) then
             EquipMetaPedOutfit(pPedID, waistTypes[19]);
-            SaveNewMetabolism(waistTypes[19]);
         elseif (metabolism == 8) then
             EquipMetaPedOutfit(pPedID, waistTypes[18]);
-            SaveNewMetabolism(waistTypes[18]);
         elseif (metabolism == 7) then
             EquipMetaPedOutfit(pPedID, waistTypes[17]);
-            SaveNewMetabolism(waistTypes[17]);
         elseif (metabolism == 6) then
             EquipMetaPedOutfit(pPedID, waistTypes[16]);
-            SaveNewMetabolism(waistTypes[16]);
         elseif (metabolism == 5) then
             EquipMetaPedOutfit(pPedID, waistTypes[15]);
-            SaveNewMetabolism(waistTypes[15]);
         elseif (metabolism == 4) then
             EquipMetaPedOutfit(pPedID, waistTypes[14]);
-            SaveNewMetabolism(waistTypes[14]);
         elseif (metabolism == 3) then
             EquipMetaPedOutfit(pPedID, waistTypes[13]);
-            SaveNewMetabolism(waistTypes[13]);
         elseif (metabolism == 2) then
             EquipMetaPedOutfit(pPedID, waistTypes[12]);
-            SaveNewMetabolism(waistTypes[12]);
         elseif (metabolism == 1) then
             EquipMetaPedOutfit(pPedID, waistTypes[11]);
-            SaveNewMetabolism(waistTypes[11]);
         elseif (metabolism == 0) then
             EquipMetaPedOutfit(pPedID, waistTypes[10]);
-            SaveNewMetabolism(waistTypes[10]);
         elseif (metabolism == -1) then
             EquipMetaPedOutfit(pPedID, waistTypes[9]);
-            SaveNewMetabolism(waistTypes[9]);
         elseif (metabolism == -2) then
             EquipMetaPedOutfit(pPedID, waistTypes[8]);
-            SaveNewMetabolism(waistTypes[8]);
         elseif (metabolism == -3) then
             EquipMetaPedOutfit(pPedID, waistTypes[7]);
-            SaveNewMetabolism(waistTypes[7]);
         elseif (metabolism == -4) then
             EquipMetaPedOutfit(pPedID, waistTypes[6]);
-            SaveNewMetabolism(waistTypes[6]);
         elseif (metabolism == -5) then
             EquipMetaPedOutfit(pPedID, waistTypes[5]);
-            SaveNewMetabolism(waistTypes[5]);
         elseif (metabolism == -6) then
             EquipMetaPedOutfit(pPedID, waistTypes[4]);
-            SaveNewMetabolism(waistTypes[4]);
         elseif (metabolism == -7) then
             EquipMetaPedOutfit(pPedID, waistTypes[3]);
-            SaveNewMetabolism(waistTypes[3]);
         elseif (metabolism == -8) then
             EquipMetaPedOutfit(pPedID, waistTypes[2]);
-            SaveNewMetabolism(waistTypes[2]);
         elseif (metabolism == -9) then
             EquipMetaPedOutfit(pPedID, waistTypes[1]);
-            SaveNewMetabolism(waistTypes[1]);
         elseif (metabolism == -10) then
             EquipMetaPedOutfit(pPedID, waistTypes[0]);
-            SaveNewMetabolism(waistTypes[0]);
         end
 
-        UpdatePedVariation(pPedID, 0, 1, 1, 1, false);
+        UpdatePedVariation(pPedID, false, true, true, true, false);
         Wait(300000);
     end)
 end
